@@ -60,6 +60,4 @@ Mit ISO-Management, Answer File Builder, Netzwerk-Topologie-Visualisierung, Gold
 
 ### Weitere Projekte
 
-- **AmikecoStudiosWebShop**
-- **MoertelUndTinte**
 - **DeepDeal**
