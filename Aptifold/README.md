@@ -4,95 +4,90 @@
   <img src="Aptifold.png" alt="Aptifold" width="700" />
 </p>
 
-**Aptifold** ist ein KI-gestütztes Bewerbungsmanagement-System, das Benutzer dabei unterstützt, ihre Jobsuche zu organisieren, zu verwalten und zu optimieren. Die Plattform kombiniert klassisches Bewerbungstracking mit KI-Features wie automatischer Anschreiben-Generierung, Lebenslauf-Analyse und Interview-Coaching.
+**Aptifold** ist ein KI-gestützter Bewerbungs-Manager für Windows. Er bündelt die Jobsuche an einer
+Stelle: Bewerbungen verfolgen, Firmen und Kontakte pflegen, Stellenanzeigen übernehmen, Anschreiben
+schreiben lassen, Vorstellungsgespräche üben.
+
+Die Anwendung ist **Local-First** gebaut. Alle Bewerbungsdaten liegen in einer verschlüsselten
+SQLite-Datenbank auf dem Rechner des Nutzers — der Desktop-Client ist die alleinige Quelle der
+Wahrheit. Der Server führt nur die Benutzerkonten, rechnet die Credits ab und reicht KI-Anfragen an
+den EU-Endpunkt weiter, ohne Inhalte zu speichern. Hochgeladene Dokumente werden als Text
+weiterverarbeitet, die Originaldateien verlassen den Rechner nicht.
 
 ---
 
 ## Technologien
 
-| Ebene             | Technologie                                                 |
-|-------------------|-------------------------------------------------------------|
-| Backend           | ASP.NET Core 10, Entity Framework Core 9, MediatR (CQRS)    |
-| Desktop-Client    | WPF mit Prism (MVVM), LiveChartsCore                        |
-| Admin-Tool        | WinForms                                                     |
-| Mobile App        | Flutter (iOS, Android, Web, Desktop)                         |
-| Datenbank         | MySQL (3 Schemas: Auth, Business, Logs)                      |
-| Cache             | Redis                                                        |
-| KI                | Google Gemini                                                |
-| Hintergrundaufgaben | Hangfire                                                   |
-| Logging           | Serilog, OpenTelemetry, Sentry                               |
-| Containerisierung | Docker Compose                                               |
-| CI/CD             | GitHub Actions                                               |
+| Ebene | Technologie |
+|---|---|
+| Desktop-Client | .NET 10, WPF mit CommunityToolkit.Mvvm, LiveChartsCore |
+| Lokale Datenhaltung | SQLite mit SQLCipher (verschlüsselt), EF Core |
+| Server | ASP.NET Core 10 (Anmeldung, Credits, KI-Proxy), MariaDB |
+| Admin-Panel | Angular 22 (TypeScript) |
+| Browser-Erweiterung | Chrome Extension (MV3, TypeScript/Vite) |
+| KI | Google Gemini über Vertex AI (EU-Endpunkt), Anthropic Claude |
+| E-Mail | IMAP/SMTP mit eigenem Konto |
+| Auslieferung | Velopack |
+| Tests | xUnit, Moq, FluentAssertions, Testcontainers |
+
+## Architektur
+
+- **Local-First** — Bewerbungsdaten bleiben lokal und verschlüsselt; der Server hält nur Auth und
+  Abrechnungs-Metadaten.
+- **Fachgebiete statt Schichten** — je Bildschirm, den der Nutzer kennt, ein Ordner im Code; die
+  Grenze verläuft zwischen Kern und Außenwelt, nicht zwischen Anwendung und Infrastruktur.
+- **Architekturtests** — Projektkanten, Paketgrenzen und Fachgebietsgrenzen werden von einer eigenen
+  Testsuite erzwungen, nicht von Konventionen.
 
 ## Features
 
 ### Bewerbungsmanagement
 
-- **Bewerbungen verwalten** -- Erstellen, Bearbeiten und Nachverfolgen aller Bewerbungen
-- **Statusverfolgung** -- Draft, Beworben, Telefoninterview, Vorstellungsgespräch, Assessment, Angebot, Abgelehnt, Ghosted
-- **Prioritäten** -- Bewerbungen nach Dringlichkeit priorisieren (Niedrig bis Dringend)
-- **Kanban-Board** -- Visuelle Darstellung aller Bewerbungen nach Status
-- **Interaktions-Timeline** -- Chronologischer Verlauf aller Kontakte (E-Mails, Anrufe, Meetings, Notizen)
-- **Statushistorie** -- Lückenlose Dokumentation aller Statusänderungen
+- **Bewerbungen verwalten** — Erstellen, Bearbeiten und Nachverfolgen aller Bewerbungen
+- **Statusverfolgung** — von Entwurf über Interview und Assessment bis Zusage, Absage oder Ghosting
+- **Kanban-Board** — alle Bewerbungen nach Status auf einen Blick
+- **Prioritäten** — nach Dringlichkeit sortieren
+- **Interaktions-Timeline** — chronologischer Verlauf aller Kontakte
+- **Statushistorie** — lückenlose Dokumentation jeder Statusänderung
 
 ### KI-Funktionen
 
-- **Anschreiben generieren** -- KI-gestützte Erstellung individueller Bewerbungsschreiben
-- **Lebenslauf-Analyse** -- Abgleich des Lebenslaufs mit der Stellenausschreibung
-- **Stellenanzeigen analysieren** -- Automatische Extraktion relevanter Informationen
-- **Interview-Coach** -- KI-generierte Übungsfragen mit Bewertung der Antworten
-- **Karriere-Chatbot** -- Persönlicher KI-Assistent für Fragen rund um die Bewerbung
-- **Eigene KI-Anweisungen** -- Anpassbare Prompt-Vorlagen für individuelle Ergebnisse
-- **Browser-Clipper** -- Stellenanzeigen direkt aus dem Browser importieren
+- **Anschreiben generieren** — individuelle Bewerbungsschreiben, als PDF nach DIN 5008
+- **Lebenslauf-Analyse** — Abgleich des Lebenslaufs mit der Stellenausschreibung
+- **Stellenanzeigen analysieren** — automatische Extraktion der relevanten Angaben
+- **Interview-Coach** — Übungsfragen mit Bewertung der Antworten
+- **Karriere-Chatbot** — Assistent für Fragen rund um die Bewerbung
+- **Eigene KI-Anweisungen** — anpassbare Vorlagen für die Ergebnisse
+- **Credits** — verbrauchsbasierte Abrechnung der KI-Nutzung, sichtbar in der App
 
-### Firmen & Kontakte
+### Stellensuche
 
-- **Firmendatenbank** -- Arbeitgeber mit Branche, Standort und Attraktivitätsbewertung verwalten
-- **Kontaktverwaltung** -- Recruiter und HR-Ansprechpartner dokumentieren
-- **Adresslookup** -- Automatische Adresssuche
+- **Stellen-Scanner** — gespeicherte Suchen laufen im Hintergrund gegen Bundesagentur für Arbeit,
+  Greenhouse und Arbeitnow
+- **Browser-Clipper** — Stellenanzeigen direkt aus dem Browser in die App übernehmen
 
-### Dokumente & Vorlagen
+### Firmen, Kontakte, Dokumente
 
-- **Dokumentenverwaltung** -- Lebensläufe und Anschreiben hochladen und organisieren
-- **Antivirus-Scan** -- Automatische Prüfung hochgeladener Dateien (ClamAV)
-- **E-Mail-Vorlagen** -- Vorlagensammlung für die Kommunikation mit Recruitern
-- **Bewerbungsmappen** -- Dokumente zu Bewerbungen zusammenstellen
+- **Firmendatenbank** — Arbeitgeber mit Branche, Standort und Bewertung
+- **Kontaktverwaltung** — Recruiter und Ansprechpartner
+- **Dokumentenverwaltung** — Lebensläufe und Anschreiben organisieren
+- **E-Mail-Vorlagen** — Vorlagensammlung für die Kommunikation
+- **Bewerbungsmappen** — Dokumente zu einer Bewerbung zusammenstellen
 
-### Integrationen
+### Postfach & Termine
 
-- Google Mail -- E-Mail-Synchronisation
-- Microsoft Graph -- Kalender- und E-Mail-Anbindung
-- SMTP -- Eigener E-Mail-Versand
+- **Postfach** — E-Mails per IMAP abrufen, Antworten per SMTP versenden
+- **Zuordnung** — eingehende Nachrichten den Bewerbungen zuordnen
+- **Termine** — Vorstellungsgespräche als .ics-Datei in den eigenen Kalender übernehmen
+- **Erinnerungen** — Hinweise auf anstehende Termine und fällige Nachfassaktionen
 
-### Benachrichtigungen & Berichte
+### Sicherheit & Datenschutz
 
-- Erinnerungen an bevorstehende Vorstellungsgespräche
-- Wöchentliche Statusberichte per E-Mail
-- Echtzeit-Benachrichtigungen in der App
-
-### Multi-Plattform
-
-- **Desktop-Anwendung (WPF)** -- Vollständiger Client mit Dashboard, Kanban, Dokumentenverwaltung und allen KI-Features
-- **Mobile App (Flutter)** -- Plattformübergreifend für iOS, Android und Web
-- **Geräte-Kopplung** -- Einfaches Verbinden neuer Geräte über 6-stelligen Code
-- **Admin-Tool** -- Separate Verwaltungsoberfläche für Systemadministration
-
-### Administration
-
-- Benutzerverwaltung mit Rollenzuweisung
-- DSGVO-konformer Datenexport und Kontolöschung
-- KI-Nutzungsstatistiken und Kostenübersicht
-- Systemprotokoll-Viewer mit Filterung
-- Performance-Center mit Abfrageanalyse
-- Dead-Letter-Queue für fehlgeschlagene Hintergrundaufgaben
-- Lasttests und Systemdiagnose
-
-### Sicherheit
-
+- Verschlüsselte lokale Datenbank (SQLCipher)
 - JWT-Authentifizierung mit Refresh-Token-Rotation
-- Brute-Force-Schutz durch Rate-Limiting
-- Verschlüsselte Speicherung sensibler Daten
-- DSGVO-Konformität (Datenexport, Anonymisierung, Löschrecht)
+- Rate-Limiting gegen Brute-Force
+- KI-Proxy ohne Speicherung der übertragenen Inhalte
+- DSGVO by Design: echtes Löschen statt Soft-Delete, pseudonymisiertes Logging
 
 ## Lizenz
 
