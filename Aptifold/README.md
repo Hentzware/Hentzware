@@ -4,66 +4,90 @@
   <img src="Aptifold.png" alt="Aptifold" width="700" />
 </p>
 
-Eine Bewerbung schreiben ist das eine. Zwanzig Bewerbungen im Kopf behalten — wer wann geantwortet
-hat, wo noch eine Nachfrage aussteht, welches Anschreiben zu welcher Stelle gehört — ist das andere.
-Genau dafür ist **Aptifold** da.
+**Aptifold** ist ein KI-gestützter Bewerbungs-Manager für Windows. Er bündelt die Jobsuche an einer
+Stelle: Bewerbungen verfolgen, Firmen und Kontakte pflegen, Stellenanzeigen übernehmen, Anschreiben
+schreiben lassen, Vorstellungsgespräche üben.
 
-Aptifold ist ein Programm für Windows, das die gesamte Jobsuche an einer Stelle bündelt: Bewerbungen
-verfolgen, Stellenanzeigen sammeln, Anschreiben schreiben lassen, Vorstellungsgespräche üben.
+Die Anwendung ist **Local-First** gebaut. Alle Bewerbungsdaten liegen in einer verschlüsselten
+SQLite-Datenbank auf dem Rechner des Nutzers — der Desktop-Client ist die alleinige Quelle der
+Wahrheit. Der Server führt nur die Benutzerkonten, rechnet die Credits ab und reicht KI-Anfragen an
+den EU-Endpunkt weiter, ohne Inhalte zu speichern. Hochgeladene Dokumente werden als Text
+weiterverarbeitet, die Originaldateien verlassen den Rechner nicht.
 
 ---
 
-## Die Daten bleiben auf dem eigenen Rechner
+## Technologien
 
-Bewerbungsunterlagen sind persönlich: Lebenslauf, Gehaltsvorstellung, Absagen. Aptifold speichert
-das alles verschlüsselt auf dem eigenen Rechner — nicht in einer Cloud, die mitliest.
+| Ebene | Technologie |
+|---|---|
+| Desktop-Client | .NET 10, WPF mit CommunityToolkit.Mvvm, LiveChartsCore |
+| Lokale Datenhaltung | SQLite mit SQLCipher (verschlüsselt), EF Core |
+| Server | ASP.NET Core 10 (Anmeldung, Credits, KI-Proxy), MariaDB |
+| Admin-Panel | Angular 22 (TypeScript) |
+| Browser-Erweiterung | Chrome Extension (MV3, TypeScript/Vite) |
+| KI | Google Gemini über Vertex AI (EU-Endpunkt), Anthropic Claude |
+| E-Mail | IMAP/SMTP mit eigenem Konto |
+| Auslieferung | Velopack |
+| Tests | xUnit, Moq, FluentAssertions, Testcontainers |
 
-Für die KI-Funktionen wird jeweils nur der Text übertragen, der für die Aufgabe nötig ist. Er wird
-verarbeitet und nicht gespeichert. Die hochgeladenen Dateien selbst verlassen den Rechner nie.
+## Architektur
 
-## Was Aptifold kann
+- **Local-First** — Bewerbungsdaten bleiben lokal und verschlüsselt; der Server hält nur Auth und
+  Abrechnungs-Metadaten.
+- **Fachgebiete statt Schichten** — je Bildschirm, den der Nutzer kennt, ein Ordner im Code; die
+  Grenze verläuft zwischen Kern und Außenwelt, nicht zwischen Anwendung und Infrastruktur.
+- **Architekturtests** — Projektkanten, Paketgrenzen und Fachgebietsgrenzen werden von einer eigenen
+  Testsuite erzwungen, nicht von Konventionen.
 
-### Den Überblick behalten
+## Features
 
-- Alle Bewerbungen an einem Ort, mit Frist, Ansprechpartner und Stand des Verfahrens
-- Ein Board, das auf einen Blick zeigt, was in Vorbereitung, im Gespräch oder entschieden ist
-- Ein Verlauf je Bewerbung: jedes Telefonat, jede E-Mail, jede Notiz in zeitlicher Reihenfolge
-- Erinnerungen an Termine und an Bewerbungen, bei denen eine Nachfrage fällig wird
+### Bewerbungsmanagement
 
-### Schreiben lassen
+- **Bewerbungen verwalten** — Erstellen, Bearbeiten und Nachverfolgen aller Bewerbungen
+- **Statusverfolgung** — von Entwurf über Interview und Assessment bis Zusage, Absage oder Ghosting
+- **Kanban-Board** — alle Bewerbungen nach Status auf einen Blick
+- **Prioritäten** — nach Dringlichkeit sortieren
+- **Interaktions-Timeline** — chronologischer Verlauf aller Kontakte
+- **Statushistorie** — lückenlose Dokumentation jeder Statusänderung
 
-- **Anschreiben** — passend zur Stellenanzeige formuliert, als fertiges PDF nach DIN 5008
-- **Lebenslauf prüfen** — was die Anzeige verlangt und was der Lebenslauf davon hergibt
-- **Stellenanzeige auswerten** — Aufgaben, Anforderungen und Ansprechpartner werden herausgezogen
-- **Interview-Training** — Übungsfragen zur konkreten Stelle, mit Rückmeldung zu den Antworten
-- **Nachfragen** — ein Assistent für alles, was während der Bewerbungsphase aufkommt
-- Der Ton lässt sich vorgeben, damit die Texte nach der eigenen Sprache klingen
+### KI-Funktionen
 
-### Stellen finden
+- **Anschreiben generieren** — individuelle Bewerbungsschreiben, als PDF nach DIN 5008
+- **Lebenslauf-Analyse** — Abgleich des Lebenslaufs mit der Stellenausschreibung
+- **Stellenanzeigen analysieren** — automatische Extraktion der relevanten Angaben
+- **Interview-Coach** — Übungsfragen mit Bewertung der Antworten
+- **Karriere-Chatbot** — Assistent für Fragen rund um die Bewerbung
+- **Eigene KI-Anweisungen** — anpassbare Vorlagen für die Ergebnisse
+- **Credits** — verbrauchsbasierte Abrechnung der KI-Nutzung, sichtbar in der App
 
-- Gespeicherte Suchen laufen im Hintergrund und melden neue Treffer
-- Eine Erweiterung für Chrome übernimmt eine Stellenanzeige aus dem Browser mit einem Klick
+### Stellensuche
 
-### Schreibtisch und Ablage
+- **Stellen-Scanner** — gespeicherte Suchen laufen im Hintergrund gegen Bundesagentur für Arbeit,
+  Greenhouse und Arbeitnow
+- **Browser-Clipper** — Stellenanzeigen direkt aus dem Browser in die App übernehmen
 
-- Das Bewerbungspostfach direkt in der App: Nachrichten lesen, beantworten, der richtigen Bewerbung
-  zuordnen
-- Lebensläufe, Anschreiben und Zeugnisse geordnet ablegen und zu Bewerbungsmappen zusammenstellen
-- Firmen und Ansprechpartner mit Adresse, Branche und eigener Bewertung
-- Textbausteine für wiederkehrende E-Mails
-- Termine für Vorstellungsgespräche in den eigenen Kalender übernehmen
+### Firmen, Kontakte, Dokumente
 
-## Was es kostet
+- **Firmendatenbank** — Arbeitgeber mit Branche, Standort und Bewertung
+- **Kontaktverwaltung** — Recruiter und Ansprechpartner
+- **Dokumentenverwaltung** — Lebensläufe und Anschreiben organisieren
+- **E-Mail-Vorlagen** — Vorlagensammlung für die Kommunikation
+- **Bewerbungsmappen** — Dokumente zu einer Bewerbung zusammenstellen
 
-Aptifold selbst ist die Anwendung auf dem eigenen Rechner. Nur die KI-Funktionen verbrauchen
-Guthaben, das in Paketen gekauft wird. Wie viel eine Anfrage gekostet hat, steht in der App — es
-läuft nichts im Hintergrund weiter, was niemand bestellt hat.
+### Postfach & Termine
 
-## Technisch
+- **Postfach** — E-Mails per IMAP abrufen, Antworten per SMTP versenden
+- **Zuordnung** — eingehende Nachrichten den Bewerbungen zuordnen
+- **Termine** — Vorstellungsgespräche als .ics-Datei in den eigenen Kalender übernehmen
+- **Erinnerungen** — Hinweise auf anstehende Termine und fällige Nachfassaktionen
 
-Windows-Anwendung auf Basis von .NET 10 und WPF, mit verschlüsselter lokaler Datenbank. Dazu ein
-schlanker Server für Anmeldung und Abrechnung, eine Chrome-Erweiterung und Sprachmodelle von Google
-und Anthropic, angesprochen über europäische Endpunkte.
+### Sicherheit & Datenschutz
+
+- Verschlüsselte lokale Datenbank (SQLCipher)
+- JWT-Authentifizierung mit Refresh-Token-Rotation
+- Rate-Limiting gegen Brute-Force
+- KI-Proxy ohne Speicherung der übertragenen Inhalte
+- DSGVO by Design: echtes Löschen statt Soft-Delete, pseudonymisiertes Logging
 
 ## Lizenz
 
