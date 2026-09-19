@@ -17,5 +17,3 @@ Alles bleibt dabei auf dem eigenen Rechner: Bewerbungen, Lebensläufe und Notize
 gespeichert, nicht auf einem fremden Server.
 
 ![Status](https://img.shields.io/badge/Status-Aktive%20Entwicklung-brightgreen)
-
-**[Mehr erfahren →](Aptifold/README.md)**
