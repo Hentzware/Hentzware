@@ -10,15 +10,12 @@ Softwareprojekte von [Henning Entz](https://github.com/Hentzware).
 
 <br>
 
-KI-gestützter Bewerbungs-Manager für Windows — **Local-First**: Die Bewerbungsdaten liegen in einer
-verschlüsselten SQLite-Datenbank auf dem eigenen Rechner, nicht auf einem Server. Der Server kennt nur
-das Konto und leitet KI-Anfragen weiter, ohne sie zu speichern. Dazu Kanban-Board, Postfach über
-IMAP/SMTP, Stellen-Scanner, Chrome-Extension zum Übernehmen von Stellenanzeigen und
-Anschreiben nach DIN 5008.
+Der Bewerbungs-Manager für Windows. Aptifold behält den Überblick über alle laufenden Bewerbungen,
+schreibt auf Wunsch das Anschreiben, findet passende Stellen und übt das Vorstellungsgespräch mit.
 
-| | |
-|---|---|
-| **Tech Stack** | .NET 10 · WPF (CommunityToolkit.Mvvm) · SQLite (SQLCipher) · ASP.NET Core · MariaDB · Chrome Extension (TypeScript/Vite) · Angular 22 |
-| **Status** | ![Status](https://img.shields.io/badge/Status-Aktive%20Entwicklung-brightgreen) |
+Alles bleibt dabei auf dem eigenen Rechner: Bewerbungen, Lebensläufe und Notizen werden verschlüsselt
+gespeichert, nicht auf einem fremden Server.
+
+![Status](https://img.shields.io/badge/Status-Aktive%20Entwicklung-brightgreen)
 
 **[Mehr erfahren →](Aptifold/README.md)**
